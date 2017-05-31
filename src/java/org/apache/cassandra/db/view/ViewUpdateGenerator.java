@@ -408,7 +408,7 @@ public class ViewUpdateGenerator
                 clusteringValues[viewColumn.position()] = value;
         }
 
-        currentViewEntryBuilder.newRow(new Clustering(clusteringValues));
+        currentViewEntryBuilder.newRow(Clustering.make(clusteringValues));
     }
 
     private LivenessInfo computeLivenessInfoForEntry(Row baseRow)
