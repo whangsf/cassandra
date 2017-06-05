@@ -51,7 +51,8 @@ class Cql3ParsingRuleSet(CqlParsingRuleSet):
         ('default_time_to_live', None),
         ('speculative_retry', None),
         ('memtable_flush_period_in_ms', None),
-        ('cdc', None)
+        ('cdc', None),
+        ('purge_ttl_on_expiration', None)
     )
 
     columnfamily_layout_map_options = (
@@ -506,7 +507,7 @@ def cf_prop_val_completer(ctxt, cass):
     if this_opt in ('min_compaction_threshold', 'max_compaction_threshold',
                     'gc_grace_seconds', 'min_index_interval', 'max_index_interval'):
         return [Hint('<integer>')]
-    if this_opt in ('cdc'):
+    if this_opt in ('cdc', 'purge_ttl_on_expiration'):
         return [Hint('<true|false>')]
     return [Hint('<option_value>')]
 

@@ -133,6 +133,7 @@ public final class SchemaKeyspace
               + "read_repair_chance double,"
               + "speculative_retry text,"
               + "cdc boolean,"
+              + "purge_ttl_on_expiration boolean,"
               + "PRIMARY KEY ((keyspace_name), table_name))");
 
     private static final TableMetadata Columns =
@@ -198,6 +199,7 @@ public final class SchemaKeyspace
               + "read_repair_chance double,"
               + "speculative_retry text,"
               + "cdc boolean,"
+              + "purge_ttl_on_expiration boolean,"
               + "PRIMARY KEY ((keyspace_name), view_name))");
 
     private static final TableMetadata Indexes =
@@ -543,7 +545,8 @@ public final class SchemaKeyspace
                .add("caching", params.caching.asMap())
                .add("compaction", params.compaction.asMap())
                .add("compression", params.compression.asMap())
-               .add("extensions", params.extensions);
+               .add("extensions", params.extensions)
+               .add("purge_ttl_on_expiration", params.purgeTtlOnExpiration);
 
         // Only add CDC-enabled flag to schema if it's enabled on the node. This is to work around RTE's post-8099 if a 3.8+
         // node sends table schema to a < 3.8 versioned node with an unknown column.
@@ -1000,6 +1003,7 @@ public final class SchemaKeyspace
                           .crcCheckChance(row.getDouble("crc_check_chance"))
                           .speculativeRetry(SpeculativeRetryParam.fromString(row.getString("speculative_retry")))
                           .cdc(row.has("cdc") && row.getBoolean("cdc"))
+                          .purgeTtlOnExpiration(row.has("purge_ttl_on_expiration") ? row.getBoolean("purge_ttl_on_expiration") : false)
                           .build();
     }
 

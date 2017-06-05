@@ -21,12 +21,14 @@ import java.nio.ByteBuffer;
 import java.security.MessageDigest;
 import java.util.Objects;
 
-import org.apache.cassandra.schema.ColumnMetadata;
 import org.apache.cassandra.db.DeletionPurger;
 import org.apache.cassandra.db.TypeSizes;
 import org.apache.cassandra.db.context.CounterContext;
 import org.apache.cassandra.db.marshal.AbstractType;
 import org.apache.cassandra.db.marshal.CollectionType;
+import org.apache.cassandra.schema.ColumnMetadata;
+import org.apache.cassandra.schema.Schema;
+import org.apache.cassandra.schema.TableMetadataRef;
 import org.apache.cassandra.serializers.MarshalException;
 import org.apache.cassandra.utils.FBUtilities;
 import org.apache.cassandra.utils.memory.AbstractAllocator;
@@ -64,6 +66,16 @@ public abstract class AbstractCell extends Cell
         return ttl() != NO_TTL;
     }
 
+    public boolean shouldPurgeTtlOnExpiration()
+    {
+        TableMetadataRef tableRef = Schema.instance.getTableMetadataRef(column.ksName, column.cfName);
+        if (tableRef != null)
+        {
+            return tableRef.get().params.purgeTtlOnExpiration;
+        }
+        return false;
+    }
+
     public Cell markCounterLocalToBeCleared()
     {
         if (!isCounterCell())
@@ -88,6 +100,8 @@ public abstract class AbstractCell extends Cell
             // to do both here.
             if (isExpiring())
             {
+                if (shouldPurgeTtlOnExpiration())
+                    return null;
                 // Note that as long as the expiring column and the tombstone put together live longer than GC grace seconds,
                 // we'll fulfil our responsibility to repair. See discussion at
                 // http://cassandra-user-incubator-apache-org.3065146.n2.nabble.com/repair-compaction-and-tombstone-rows-td7583481.html

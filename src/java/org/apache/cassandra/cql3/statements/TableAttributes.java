@@ -133,6 +133,9 @@ public final class TableAttributes extends PropertyDefinitions
         if (hasOption(Option.CDC))
             builder.cdc(getBoolean(Option.CDC.toString(), false));
 
+        if (hasOption(Option.PURGE_TTL_ON_EXPIRATION))
+            builder.purgeTtlOnExpiration(getBoolean(Option.PURGE_TTL_ON_EXPIRATION.toString(), false));
+
         return builder.build();
     }
 

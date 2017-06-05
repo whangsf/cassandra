@@ -718,6 +718,12 @@ public final class TableMetadata
             return this;
         }
 
+        public Builder purgeTtlOnExpiration(boolean val)
+        {
+            params.purgeTtlOnExpiration(val);
+            return this;
+        }
+
         public Builder isView(boolean val)
         {
             isView = val;
