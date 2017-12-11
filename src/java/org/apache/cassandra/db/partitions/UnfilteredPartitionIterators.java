@@ -240,14 +240,11 @@ public abstract class UnfilteredPartitionIterators
      */
     public static void digest(UnfilteredPartitionIterator iterator, Hasher hasher, int version)
     {
-        try (UnfilteredPartitionIterator iter = iterator)
+        while (iterator.hasNext())
         {
-            while (iter.hasNext())
+            try (UnfilteredRowIterator partition = iterator.next())
             {
-                try (UnfilteredRowIterator partition = iter.next())
-                {
-                    UnfilteredRowIterators.digest(partition, hasher, version);
-                }
+                UnfilteredRowIterators.digest(partition, hasher, version);
             }
         }
     }
